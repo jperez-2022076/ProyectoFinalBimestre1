@@ -23,7 +23,7 @@ export const agregarProducto = async(req,res)=>{
 
 export const listar =async(req,res)=>{
     try {
-        let producto = await productoModel.find().populate('categoria',['categoria','descripcion'])
+        let producto = await productoModel.find({estado: true}).populate('categoria',['categoria','descripcion'])
         if(producto.length === 0) return res.status(400).send({message: 'No funciono'})
         return res.send({producto})
     } catch (err) {
@@ -36,9 +36,10 @@ export const listar =async(req,res)=>{
 export const listaNombre = async(req,res)=>{
     try {
         let {nombreProducto} = req.body
-        let producto = await productoModel.findOne({nombreProducto: nombreProducto})
-        if(!producto)return res.status(404).send({message: 'Ningun producto tiene este nombre'})
-        return res.send({message:'Producto encontrado',producto})
+        let producto = await productoModel.findOne({nombreProducto: nombreProducto},{estado: true})
+        if(!producto || producto.estado === false)return res.status(404).send({message: 'Ningun producto tiene este nombre'})
+        let productoEncontrado = await productoModel.findOne({_id: producto._id}).populate('categoria',['categoria','descripcion'])
+        return res.send({message:'Producto encontrado',productoEncontrado})
     } catch (err) {
         console.error(err)
         return res.status(500).send({message:'Error al listar por nombre'})
@@ -48,11 +49,11 @@ export const listaNombre = async(req,res)=>{
 export const listarCategoria = async(req,res)=>{
     try {
         let {id} = req.params
-        console.log(id)
-        let producto = await productoModel.find({categoria: id}).populate('categoria',['categoria','descripcion'])
-        if(producto.length === 0) return res.status(400).send({message: 'No se encotro productos en esta categoria'})
-        return res.send({producto})
-    } catch (err) {
+        let producto = await productoModel.findOne({categoria: id},{estado: true})
+        if(!producto || producto.estado === false)return res.status(404).send({message: 'Ningun producto tiene este nombre'})
+        let productoEncontrado = await productoModel.findOne({_id: producto._id}).populate('categoria',['categoria','descripcion'])
+        return res.send({message:'Producto encontrado',productoEncontrado})
+     } catch (err) {
         console.error(err)
         return res.status(500).send({message:'No se encontro Productos'})
         
@@ -81,7 +82,8 @@ export const actulizarProducto = async(req,res)=>{
 export const eliminarProducto = async(req,res)=>{
     try {
         let {id} = req.params
-        let eliminarProducto = await productoModel.findOneAndDelete({_id: id})
+        let eliminarProducto = await productoModel.findOneAndUpdate({_id: id},{estado: false})
+        if(eliminarProducto.estado === false) return res.send({message: 'Producto ya eliminado '})
         if(!eliminarProducto) return res.status(404).send({message: 'No se encotro el Producto y no se pudo eliminar' })
         return res.send({message: `Producto ${eliminarProducto.nombreProducto} se elimino exitosamente`})
     } catch (err) {

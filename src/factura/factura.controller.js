@@ -7,7 +7,7 @@ import facturalModel from "./factural.model.js"
 export const agregaCarrito = async(req,res)=>{
     try {
         let datos = req.body
-        let fecha =  new Date()
+       
         let usuario = await userModel.findOne({_id: datos.usuario})
         if(!usuario) return res.status(400).send({message: 'Usuario no encontrado'})
         let producto = await productoModel.findOneAndUpdate(
@@ -15,20 +15,9 @@ export const agregaCarrito = async(req,res)=>{
          { $inc: { contador: 1 } }
         )
         if(!producto)return res.status(400).send({message: 'No se encotro el producto'})
-        const opcionesFormato = {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            
-        }
-        const fechaFormateada = new Intl.DateTimeFormat('es-ES', opcionesFormato).format(fecha)
-        datos.fecha = fechaFormateada
         datos.precioFinal = datos.cantidadProducto * producto.precio
         if (Number.isInteger(datos.precioFinal)) {
-            datos.precioFinal = datos.precioFinal.toFixed(2);
+            datos.precioFinal = datos.precioFinal.toFixed(2)
         }
         datos.estado = true // true significa que todavia no a pagado 
         let factura = new facturalModel(datos)
@@ -60,13 +49,15 @@ export const factura = async (req, res) => {
         if (!facturas || facturas.length === 0) {
             return res.status(401).send({ message: 'Usuario no ha agregado nada nuevo al carrito' })
         }
-        await facturalModel.updateMany({ usuario: id, estado: true }, { $set: { estado: false } })
+        await facturalModel.updateMany({ usuario: id, estado: true }, { $set: { estado: false } },{$set: {fecha: fechaFormateada}})
         let totalFactura = 0
         let detallesFactura = []
        
         for (let factura of facturas) {
             let producto = await productoModel.findOne({ _id: factura.producto })
+            await productoModel.findOneAndUpdate({ _id: factura.producto },{stock: producto.stock - factura.cantidadProducto})
             if (!producto)return res.status(401).send({ message: 'Producto no encontrado' })
+
             let totalPorProducto = factura.cantidadProducto * producto.precio
             detallesFactura.push({
                 nombreProducto: producto.nombreProducto,

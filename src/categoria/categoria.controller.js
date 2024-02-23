@@ -83,11 +83,9 @@ export const agregarPorDefecto = async()=>{
             }
             let categoria = new categoriaModelo(datos)
             await categoria.save()
+            return console.log('Se acaba de agregar categoria Por Defecto')
         } 
-       
-    } catch (err) {
-        
-
-        
+        return console.log('Ya se creo el Por Defecto')   
+    } catch (err) {  
     }
 }

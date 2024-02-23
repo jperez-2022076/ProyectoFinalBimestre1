@@ -22,8 +22,15 @@ export const agregarUser = async(req,res)=>{
 
 export const login = async(req,res)=>{
     try {
-        let { usuario,contraseña} = req.body
-        let user = await userModel.findOne({ usuario})
+        let {email, usuario,contraseña} = req.body
+        let user = await userModel.findOne({
+            $or:[{
+                usuario: usuario
+            },
+            {
+                email: email
+            }]
+        })
         
         let facturas = await facturalModel.find({ usuario: user.id, estado: false })
         let totalFactura = 0
@@ -91,4 +98,26 @@ export const eliminar = async(req,res)=>{
         
     }
 
+}
+
+export const DefectoAdmin = async()=>{
+    try {
+        let buscarUser = await userModel.findOne({usuario: 'Jnoj'})
+        if(!buscarUser){
+            let datos = {
+                nombre: 'Josue',
+                apellido: 'Noj',
+                email: 'josueNoj@gmail.com',
+                usuario: 'Jnoj',
+                contraseña: await encriptar('12345678'),
+                telefono: '12345678',
+                rol: 'ADMIN'
+            }
+            let user = new userModel(datos)
+            await user.save()
+            return console.log('Se caba de agregar el usuario Jnoj su rol es ADMIN')
+        }
+        return console.log('Ya esta creado el usuario Jnoj su rol es ADMIN')
+    } catch (err) {
+    }
 }

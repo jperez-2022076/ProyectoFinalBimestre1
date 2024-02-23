@@ -10,7 +10,7 @@ api.get('/listarPorCategoria/:id',listarCategoria)
 api.post('/listarPorNombre',listaNombre)
 api.post('/agregarProducto',agregarProducto)
 api.put('/actulizarProducto/:id',actulizarProducto)
-api.delete('/eliminarProducto/:id',eliminarProducto)
+api.get('/eliminarProducto/:id',eliminarProducto)
 
 
 

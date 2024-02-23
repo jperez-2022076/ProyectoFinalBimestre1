@@ -25,7 +25,12 @@ const productoSchema = Schema({
     contador:{
         type: Number
         
+    },
+    estado:{
+        type:Boolean,
+        default: true
     }
+
 
 })
 
