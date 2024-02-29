@@ -23,7 +23,8 @@ const productoSchema = Schema({
         required: true
     },
     contador:{
-        type: Number
+        type: Number,
+        default: 0
         
     },
     estado:{

@@ -15,7 +15,7 @@ const FacturaSchema =Schema({
         required: true
     },
 
-    precioFinal:{
+    subtotal:{
         type: Number,
     },
     usuario:{

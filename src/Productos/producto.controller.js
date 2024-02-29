@@ -59,8 +59,27 @@ export const listarCategoria = async(req,res)=>{
         
     }
 }
+export const listarProductosAgotados = async (req,res)=>{
+    try {
+        let producto = await productoModel.find({stock: 0})
+        if(producto.length === 0 ||!producto )return res.status(404).send({message: 'No hay productos agotados'})
+        return res.send({producto})
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({message:'Error al listar prodcutos ya agotados'})
+    }
+}
 
-
+export const listarProductosPorContador = async (req, res) => {
+    try {
+        const productos = await productoModel.find().sort({ contador: -1 })
+        if (!productos || productos.length === 0) return res.status(404).send({ message: 'No hay productos disponibles' })
+        return res.send({ productos })
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({ message: 'Error al obtener la lista de productos' })
+    }
+}
 
 export const actulizarProducto = async(req,res)=>{
            try {
