@@ -7,6 +7,7 @@ import facturalModel from "./factural.model.js"
 export const agregaCarrito = async(req,res)=>{
     try {
         let datos = req.body
+        let {id} = req.user
         let fecha =  new Date()
         const opcionesFormato = {
             year: 'numeric',
@@ -18,8 +19,9 @@ export const agregaCarrito = async(req,res)=>{
         }
         const fechaFormateada = new Intl.DateTimeFormat('es-ES', opcionesFormato).format(fecha)
         datos.fecha = fechaFormateada
-        let usuario = await userModel.findOne({_id: datos.usuario})
+        let usuario = await userModel.findOne({_id: id})
         if(!usuario) return res.status(400).send({message: 'Usuario no encontrado'})
+        datos.usuario = usuario._id
         let producto = await productoModel.findOneAndUpdate(
          {_id : datos.producto,estado: true},
          { $inc: { contador: 1 } }
@@ -48,7 +50,7 @@ export const agregaCarrito = async(req,res)=>{
 
 export const factura = async (req, res) => {
     try {
-        let { id } = req.params;
+        let { id } = req.user;
         let fecha =  new Date()
         const opcionesFormato = {
             year: 'numeric',
@@ -91,6 +93,109 @@ export const factura = async (req, res) => {
         })
     } catch (err) {
         console.error(err);
-        return res.status(500).send({ message: 'Error al obtener la factura' });
+        return res.status(500).send({ message: 'Error al obtener la factura' })
     }
-};
+}
+
+export const FacturaAdmin = async(req,res)=>{
+    try {
+        let{id} = req.params
+        let facturas = await facturalModel.find({usuario: id})
+        let detallesFactura = []
+       let totalFactura = 0
+        for (let factura of facturas) {
+            let producto = await productoModel.findOne({ _id: factura.producto })
+            if (!producto)return res.status(401).send({ message: 'Producto no encontrado' })
+            let totalPorProducto = factura.cantidadProducto * producto.precio
+            detallesFactura.push({
+                fecha: factura.fecha,
+                nombreProducto: producto.nombreProducto,
+                cantidad: factura.cantidadProducto,
+                precio: producto.precio,
+                subtotal: totalPorProducto.toFixed(2) 
+            })
+            totalFactura += totalPorProducto
+        }
+        return res.send({
+            factura: detallesFactura,
+            total: totalFactura.toFixed(2) 
+        })
+    } catch (err) {
+        console.error(err)
+        
+    }
+}
+
+export const actualizarCarrito = async(req,res)=>{
+    try {
+        let {uid} = req.params
+        let datos = req.body
+        let {id} = req.user
+        let facturaBuscar = await facturalModel.findOne({_id: uid})
+        if(!facturaBuscar) return res.status(404).send({message: 'No se encontro la factura'})
+        if(facturaBuscar.usuario ==  id){
+            if ('fecha' in datos || 'usuario' in datos|| 'estado' in datos) {
+                return res.status(400).send({ message: 'Hay datos que no se pueden actualizar' })
+            }
+            if ('cantidadProducto' in datos && 'producto' in datos) {
+                // Obtener el producto actualizado (nuevo) desde la base de datos
+                let productoActualizado = await productoModel.findOne({ _id: datos.producto })
+                    datos.subtotal = productoActualizado.precio * datos.cantidadProducto
+            } else if ('cantidadProducto' in datos) {
+                let producto= await productoModel.findOne({_id: facturaBuscar.producto})
+                // Si solo se proporciona la cantidad, calcular el subtotal basado en esa cantidad y el precio actual de la factura
+                datos.subtotal = producto.precio * datos.cantidadProducto
+            }
+            let facturaActualizada = await facturalModel.findOneAndUpdate(
+                {_id: uid},
+                datos,
+                {new: true}
+                )
+            if(!facturaActualizada)return res.status(403).send({message:'No se pudo actualizar'})
+            return res.send({message: 'Actualizado',facturaActualizada})
+        }
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({message: 'Error al actualizar la factura'})
+    }
+   
+}
+
+export const actualizarFacturaAdmin = async(req,res)=>{
+    try {
+        let {uid} = req.params
+        let datos = req.body
+        
+        let facturaBuscar = await facturalModel.findOne({_id: uid})
+        if(!facturaBuscar) return res.status(404).send({message: 'No se encontro la factura'})
+       
+            if ('fecha' in datos || 'usuario' in datos) {
+                return res.status(400).send({ message: 'Hay datos que no se pueden actualizar' })
+            }
+            if ('cantidadProducto' in datos && 'producto' in datos) {
+                // Obtener el producto actualizado (nuevo) desde la base de datos
+                let productoActualizado = await productoModel.findOne({ _id: datos.producto })
+                    datos.subtotal = productoActualizado.precio * datos.cantidadProducto
+            } else if ('cantidadProducto' in datos) {
+                let producto= await productoModel.findOne({_id: facturaBuscar.producto})
+                // Si solo se proporciona la cantidad, calcular el subtotal basado en esa cantidad y el precio actual de la factura
+                datos.subtotal = producto.precio * datos.cantidadProducto
+            }
+            let facturaActualizada = await facturalModel.findOneAndUpdate(
+                {_id: uid},
+                datos,
+                {new: true}
+                )
+            if(!facturaActualizada)return res.status(403).send({message:'No se pudo actualizar'})
+            return res.send({message: 'Actualizado',facturaActualizada})
+        
+        
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({message: 'Error al actualizar la factura'})
+    }
+   
+}
+
+
