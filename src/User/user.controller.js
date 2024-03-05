@@ -36,7 +36,6 @@ export const login = async (req, res) => {
         let facturasPorFecha = {}
         for (let factura of facturas) {
             let producto = await productoModel.findOne({ _id: factura.producto })
-            if (!producto) return res.status(401).send({ message: 'Producto no encontrado' })
             let totalPorProducto = factura.cantidadProducto * producto.precio
             // Obtener la fecha de la factura y formatearla
             const fechaFactura = moment(factura.fecha, 'DD/MM/YYYY, HH:mm:ss')

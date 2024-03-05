@@ -3,21 +3,28 @@ import { Schema, model } from "mongoose"
 const FacturaSchema =Schema({
     fecha:{
         type: String,
-        immutable: true  
+        immutable: true  ,
+        default: '0/0/0'
     },
-    producto:{
-        type: Schema.ObjectId,
-        ref: 'productos',
-        required: true
+    nit:{
+         type:String,
+        default: 'C/F'
     },
-    cantidadProducto:{
-        type:Number,
-        required: true
-    },
-
-    subtotal:{
-        type: Number,
-    },
+    carritoCompra: [{
+        producto: {
+            type: Schema.ObjectId,
+            ref: 'Producto',
+            required: true
+        },
+        cantidadProducto: {
+            type: Number,
+            required: true
+        },
+        subtotal: {
+            type: Number,
+            required: true  
+        }
+    }],
     usuario:{
         type: Schema.ObjectId,
         ref: 'User',
