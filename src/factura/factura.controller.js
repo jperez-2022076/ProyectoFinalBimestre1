@@ -3,6 +3,11 @@
 import productoModel from "../Productos/producto.model.js"
 import userModel from "../User/user.model.js"
 import facturalModel from "./factural.model.js"
+import PDFDocument from 'pdfkit'
+import url from 'url'
+import fs from 'fs'
+import path from 'path'
+
 
 
 export const agregaCarrito = async (req, res) => {
@@ -11,6 +16,7 @@ export const agregaCarrito = async (req, res) => {
         const { id } = req.user
         const usuario = await userModel.findOne({ _id: id })
         if (!usuario) return res.status(400).send({ message: 'Usuario no encontrado' })
+        if('fecha' in datos)return res.send({message:'No se puede agregar la fecha se agrega automaticamente'})
         const facturaExistente = await facturalModel.findOne({ usuario: usuario._id, estado: true })
         let factura
         const producto = await productoModel.findOneAndUpdate(
@@ -52,12 +58,10 @@ export const agregaCarrito = async (req, res) => {
             const producto = await productoModel.findOneAndUpdate(
                 { _id: productoId, estado: true },
                 { $inc: { contador: 1 } }
-            );
-
-            if (!producto) return res.status(400).send({ message: 'No se encontró el producto' });
-
+            )
+            if (!producto) return res.status(400).send({ message: 'No se encontró el producto' })
             if (producto.stock <= 0) {
-                return res.send({ message: 'No tenemos el producto seleccionado en stock' });
+                return res.send({ message: 'No tenemos el producto seleccionado en stock' })
             } else if (cantidadProducto > producto.stock) {
                 return res.send({ message: `No tenemos suficiente stock del producto, solo tenemos ${producto.stock} unidades` })
             }
@@ -76,22 +80,19 @@ export const agregaCarrito = async (req, res) => {
             })
             await factura.save()
         }
-
-        console.log("Factura agregada:", factura);
-
-        return res.send({ message: `Se agregó al usuario ${usuario.nombre} el producto con una cantidad de ${cantidadProducto}, el subtotal es Q.${factura.carritoCompra[0].subtotal}` });
+        return res.send({ message: `Se agregó al usuario ${usuario.nombre} el producto con una cantidad de ${cantidadProducto}, el subtotal es Q.${factura.carritoCompra[0].subtotal}` })
     } catch (err) {
-        console.error(err);
-        return res.status(500).send({ message: 'Error al agregar al carrito' });
+        console.error(err)
+        return res.status(500).send({ message: 'Error al agregar al carrito' })
     }
-};
+}
 
 
 
 export const factura = async (req, res) => {
     try {
-         let { id } = req.user;
-       let fecha = new Date();
+         let { id,usuario,nombre } = req.user
+       let fecha = new Date()
         const opcionesFormato = {
             year: 'numeric',
             month: 'numeric',
@@ -99,32 +100,22 @@ export const factura = async (req, res) => {
             hour: 'numeric',
             minute: 'numeric',
             second: 'numeric',
-        };
-        const fechaFormateada = new Intl.DateTimeFormat('es-ES', opcionesFormato).format(fecha);
-        let facturas = await facturalModel.find({ usuario: id, estado: true });
-
-        if (!facturas || facturas.length === 0) {
-            return res.status(401).send({ message: 'Usuario no ha agregado nada nuevo al carrito' });
         }
+        const fechaFormateada = new Intl.DateTimeFormat('es-ES', opcionesFormato).format(fecha)
+        let facturas = await facturalModel.find({ usuario: id, estado: true })
 
-        await facturalModel.updateMany({ usuario: id, estado: true }, { $set: { estado: false, fecha: fechaFormateada } });
-
-        let detallesFactura = [];
-        let totalFactura = 0;
-
+        if (!facturas || facturas.length === 0) return res.status(401).send({ message: 'Usuario no ha agregado nada nuevo al carrito' })
+        await facturalModel.updateMany({ usuario: id, estado: true }, { $set: { estado: false, fecha: fechaFormateada } })
+        let detallesFactura = []
+        let totalFactura = 0
         for (let factura of facturas) {
             for (let item of factura.carritoCompra) {
-                let producto = await productoModel.findOne({ _id: item.producto });
-                if (!producto) return res.status(401).send({ message: 'Producto no encontrado' });
-
-                await productoModel.findOneAndUpdate({ _id: item.producto }, { stock: producto.stock - item.cantidadProducto });
-
-                let productoStock = await productoModel.findOne({ _id: item.producto });
-                if (productoStock.stock === 0) await productoModel.findOneAndUpdate({ _id: item.producto }, { estado: false });
-
-                let totalPorProducto = item.subtotal;
-                totalFactura += +totalPorProducto.toFixed(2);
-
+                let producto = await productoModel.findOne({ _id: item.producto })
+                if (!producto) return res.status(401).send({ message: 'Producto no encontrado' })
+                let productoStock = await productoModel.findOne({ _id: item.producto })
+                if (productoStock.stock === 0) await productoModel.findOneAndUpdate({ _id: item.producto }, { estado: false })
+                let totalPorProducto = item.subtotal
+                totalFactura += +totalPorProducto.toFixed(2)
                 // Agregar información del producto al array de detalles
                 detallesFactura.push({
                     productoId: producto._id,
@@ -132,57 +123,86 @@ export const factura = async (req, res) => {
                     precio: producto.precio,
                     cantidadProducto: item.cantidadProducto,
                     subtotal: item.subtotal.toFixed(2),
-                });
+                })
             }
         }
+        const fechaFormateadaParaArchivo = fechaFormateada.replace(/[\/:]/g, '_'); // Reemplaza '/' y ':' con '_'
+        const directorioActual = path.dirname(url.fileURLToPath(import.meta.url))
+        const nombreArchivo = `Factura-${usuario} ${fechaFormateadaParaArchivo}.pdf`
+        const rutaCompleta = path.join(directorioActual, nombreArchivo)
+        // Ruta completa donde se guardará el archivo PDF físicamente
+        const filePath = path.resolve(rutaCompleta)
+         // Crear un nuevo documento PDF
+         const doc = new PDFDocument()
+         // Configurar el nombre del archivo PDF
+         res.setHeader('Content-Disposition', `inline; filename=Factura-${fechaFormateada}.pdf`)
+         // Establecer el tipo de contenido
+         res.setHeader('Content-Type', 'application/pdf')
+ 
+         // Escribir contenido en el documento PDF
+         doc.pipe(res)
+         doc.fontSize(14).text(`Factura - ${fechaFormateada}`, { align: 'center' })
+         doc.moveDown()
+         doc.fontSize(12).text(`Nombre  del usuario: ${nombre}`)
+         const nitFactura = facturas.length > 0 ? facturas[0].nit : 'N/A'
+        doc.fontSize(12).text(`NIT: ${nitFactura}`)
+         doc.moveDown()
+         doc.moveDown()
+ 
+         detallesFactura.forEach((detalle, index) => {
+             doc.fontSize(12).text(`Producto: ${detalle.nombreProducto}`)
+             doc.fontSize(12).text(`Precio: ${detalle.precio},`)
+             doc.fontSize(12).text(`Cantidad: ${detalle.cantidadProducto}`)
+             doc.fontSize(12).text(`Subtotal: ${detalle.subtotal}`, { align: 'right' })
+             if (index < detallesFactura.length - 1) {
+                 doc.moveDown();
+             }
+         })
+         doc.moveDown()
+         doc.moveDown()
+         doc.moveDown()
+         doc.fontSize(14).text(`Total: ${totalFactura.toFixed(2)}`, { align: 'right' })
+ 
+         // Finalizar el documento PDF
+         doc.end()
+         const directoryPath = path.dirname(filePath)
+         if (!fs.existsSync(directoryPath)) {
+             fs.mkdirSync(directoryPath, { recursive: true })
+         }
 
-        return res.send({
-            message: `${fechaFormateada}`,
-            detallesFactura: detallesFactura,
-            total: totalFactura.toFixed(2),
-        });
+         doc.pipe(fs.createWriteStream(filePath))
     } catch (err) {
-        console.error(err);
-        return res.status(500).send({ message: 'Error al obtener la factura' });
+        console.error(err)
+        return res.status(500).send({ message: 'Error al obtener la factura' })
     }
-};
+}
 
 
 export const FacturaAdmin = async(req,res)=>{
     try {
         let{id} = req.params
-        let fecha = new Date();
-        const opcionesFormato = {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-        };
-        const fechaFormateada = new Intl.DateTimeFormat('es-ES', opcionesFormato).format(fecha);
-        let facturas = await facturalModel.find({ usuario:id });
-        let detallesFactura = [];
-        let totalFactura = 0;
+        let facturas = await facturalModel.find({ usuario:id })
+        let detallesFactura = []
+        let totalFactura = 0
         for (let factura of facturas) {
             for (let item of factura.carritoCompra) {
-                let producto = await productoModel.findOne({ _id: item.producto });
-                if (!producto) return res.status(401).send({ message: 'Producto no encontrado' });
+                let producto = await productoModel.findOne({ _id: item.producto })
+                if (!producto) return res.status(401).send({ message: 'Producto no encontrado' })
                 let totalPorProducto = item.subtotal;
-                totalFactura += +totalPorProducto.toFixed(2);
-
+                totalFactura += +totalPorProducto.toFixed(2)
                 // Agregar información del producto al array de detalles
                 detallesFactura.push({
+                    fecha: factura.fecha,
+                    nit: factura.nit,
                     productoId: producto._id,
                     nombreProducto: producto.nombreProducto,
                     precio: producto.precio,
                     cantidadProducto: item.cantidadProducto,
                     subtotal: item.subtotal.toFixed(2),
-                });
+                })
             }
         }
         return res.send({
-            message: `${fechaFormateada}`,
             detallesFactura: detallesFactura,
             total: totalFactura
         })
@@ -197,31 +217,53 @@ export const actualizarFacturaAdmin = async(req,res)=>{
     try {
         let {uid} = req.params
         let datos = req.body
-        
-        let facturaBuscar = await facturalModel.findOne({_id: uid})
-        if(!facturaBuscar) return res.status(404).send({message: 'No se encontro la factura'})
-       
-            if ('fecha' in datos || 'usuario' in datos) {
-                return res.status(400).send({ message: 'Hay datos que no se pueden actualizar' })
+        const factura = await facturalModel.findOne({_id:uid})
+        if(!factura)return res.status(404).send({message:'Factura no encontrada'})
+        if ('cantidadProducto' in datos && 'producto' in datos ) {
+            const itemEnFactura = factura.carritoCompra.find(item => item.producto.toString() === datos.producto)
+            if (itemEnFactura) {
+                if (itemEnFactura.cantidadProducto > datos.cantidadProducto) {
+                    const producto = await productoModel.findOne({ _id: datos.producto })
+                    const cantidad = itemEnFactura.cantidadProducto - datos.cantidadProducto
+                    if (producto.stock <= 0) {
+                        return res.send({ message: 'No tenemos el producto seleccionado en stock' })
+                    } else if (datos.cantidadProducto > producto.stock) {
+                        return res.send({ message: `No tenemos suficiente stock del producto, solo tenemos ${producto.stock} unidades` })
+                    }
+                    // Restar cantidad al stock en la base de datos
+                    itemEnFactura.cantidadProducto = datos.cantidadProducto
+                    itemEnFactura.subtotal = datos.cantidadProducto*producto.precio
+                    console.log(itemEnFactura.subtotal)
+                    producto.stock += cantidad
+                    await factura.save()
+                    await producto.save()
+                } else if (itemEnFactura.cantidadProducto < datos.cantidadProducto) {
+                    const producto = await productoModel.findOne({ _id: datos.producto })
+                    const cantidad = datos.cantidadProducto - itemEnFactura.cantidadProducto
+                    if (producto.stock <= 0) {
+                        return res.send({ message: 'No tenemos el producto seleccionado en stock' })
+                    } else if (datos.cantidadProducto > producto.stock) {
+                        return res.send({ message: `No tenemos suficiente stock del producto, solo tenemos ${producto.stock} unidades` })
+                    }
+                    // Sumar cantidad al stock en la base de datos
+                    itemEnFactura.subtotal = datos.cantidadProducto*producto.precio
+                    console.log(itemEnFactura.subtotal)
+                    producto.stock -= cantidad
+                    itemEnFactura.cantidadProducto = datos.cantidadProducto
+                    await factura.save()
+                    await producto.save()
+                }
             }
-            if ('cantidadProducto' in datos && 'producto' in datos) {
-                // Obtener el producto actualizado (nuevo) desde la base de datos
-                let productoActualizado = await productoModel.findOne({ _id: datos.producto })
-                    datos.subtotal = productoActualizado.precio * datos.cantidadProducto
-            } else if ('cantidadProducto' in datos) {
-                let producto= await productoModel.findOne({_id: facturaBuscar.producto})
-                // Si solo se proporciona la cantidad, calcular el subtotal basado en esa cantidad y el precio actual de la factura
-                datos.subtotal = producto.precio * datos.cantidadProducto
-            }
-            let facturaActualizada = await facturalModel.findOneAndUpdate(
-                {_id: uid},
+        }
+        if( 'nit' in datos || 'fecha' in datos ){ 
+            console.log(datos)
+            let facturaActualizada = await facturalModel.findOneAndUpdate({_id: uid},
                 datos,
-                {new: true}
-                )
-            if(!facturaActualizada)return res.status(403).send({message:'No se pudo actualizar'})
-            return res.send({message: 'Actualizado',facturaActualizada})
-        
-        
+                {new:true})
+                if(!facturaActualizada) return res.status(404).send({message: 'No se puedo actualizar los datos de la tarjeta'})
+                return res.send({message:'Se actulizo perfectamente la factura',facturaActualizada})
+         }
+         return res.send({message:'Se actulizo perfectamente la factura',factura})
     } catch (err) {
         console.error(err)
         return res.status(500).send({message: 'Error al actualizar la factura'})

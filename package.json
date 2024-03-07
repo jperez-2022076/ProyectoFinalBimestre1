@@ -18,7 +18,8 @@
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
     "mongoose": "^8.1.2",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "pdfkit": "^0.14.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.3"

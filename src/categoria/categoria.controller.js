@@ -55,7 +55,7 @@ export const eliminarCategoria = async (req, res) => {
         return res.send({ message: `La categoría ${eliminarCategoria.categoria} fue eliminada` })
     } catch (err) {
         console.error(err);
-        return res.status(500).send({ message: 'Error al eliminar' })
+       
     }
 }
 export const porDefecto = async (id, res) => {

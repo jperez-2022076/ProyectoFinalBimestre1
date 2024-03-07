@@ -3,8 +3,7 @@ import { Schema, model } from "mongoose"
 const FacturaSchema =Schema({
     fecha:{
         type: String,
-        immutable: true  ,
-        default: '0/0/0'
+        default: "0/0/0"
     },
     nit:{
          type:String,

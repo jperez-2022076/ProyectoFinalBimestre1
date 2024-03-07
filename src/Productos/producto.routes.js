@@ -10,6 +10,7 @@ api.get('/listarProducto',[validateJwt],listar)
 api.get('/listarPorCategoria/:id',[validateJwt],listarCategoria)
 api.get('/listarPorCompra',[validateJwt],listarProductosPorContador)
 api.post('/listarPorNombre',[validateJwt],listaNombre)
+api.get('/listadoPorMasComprado',listarProductosPorContador)
 // admin
 api.get('/listarProductosAgotados',[validateJwt,admin],listarProductosAgotados)
 api.post('/agregarProducto',[validateJwt,admin],agregarProducto)

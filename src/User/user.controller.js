@@ -32,30 +32,7 @@ export const login = async (req, res) => {
             ]
         })
         let facturas = await facturalModel.find({ usuario: user.id, estado: false })
-        let totalFactura = 0
-        let facturasPorFecha = {}
-        for (let factura of facturas) {
-            let producto = await productoModel.findOne({ _id: factura.producto })
-            let totalPorProducto = factura.cantidadProducto * producto.precio
-            // Obtener la fecha de la factura y formatearla
-            const fechaFactura = moment(factura.fecha, 'DD/MM/YYYY, HH:mm:ss')
-            const fechaFormateada = fechaFactura.format('DD-MM-YYYY')
-            // Organizar las facturas por fecha
-            if (!facturasPorFecha[fechaFormateada]) {
-                facturasPorFecha[fechaFormateada] = {
-                    detalles: [],
-                    total: 0
-                }
-            }
-            facturasPorFecha[fechaFormateada].detalles.push({
-                nombreProducto: producto.nombreProducto,
-                cantidad: factura.cantidadProducto,
-                precio: producto.precio,
-                subtotal: totalPorProducto.toFixed(2) // Redondear a dos decimales
-            })
-            facturasPorFecha[fechaFormateada].total += totalPorProducto;
-            totalFactura += totalPorProducto;
-        }
+        
         if (user && await verificarContraseña(contraseña, user.contraseña)) {
             let usuarioLogeado = {
                 uid: user._id,
@@ -63,13 +40,38 @@ export const login = async (req, res) => {
                 nombre: user.nombre,
                 rol: user.rol,
             }
+            let detallesFacturas = [];
+            let totalSubtotalFactura = 0
+            let totalFactura = 0
+            for (let factura of facturas) {
+                for (let item of factura.carritoCompra) {
+                    let producto = await productoModel.findOne({ _id: item.producto });
+                    if (!producto) {
+                        return res.status(404).send({ message: 'Producto no encontrado' });
+                    }
+                  
+                    totalSubtotalFactura += +item.subtotal;
+                    detallesFacturas.push({
+                        fecha: factura.fecha,
+                        nit: factura.nit,
+                        nombreProducto: producto.nombreProducto,
+                        precio: producto.precio,
+                        cantidadProducto: item.cantidadProducto,
+                        subtotal: item.subtotal.toFixed(2),
+                    });
+                }
+            }
+            totalFactura += totalSubtotalFactura;
+
             let token = await generarJwt(usuarioLogeado)
             return res.send({
                 message: `Bienvenido ${user.nombre} `,
                 usuarioLogeado,
                 token,
-                facturasPorFecha
-            })
+                facturas: detallesFacturas,
+                totalFactura
+            });
+
         }
         return res.status(404).send({ message: 'Contraseña o usuario incorrectos' })
     } catch (err) {

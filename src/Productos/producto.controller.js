@@ -81,6 +81,7 @@ export const listarProductosPorContador = async (req, res) => {
     }
 }
 
+
 export const actulizarProducto = async(req,res)=>{
            try {
             let {id}= req.params
