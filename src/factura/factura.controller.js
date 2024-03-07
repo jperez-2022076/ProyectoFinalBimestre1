@@ -12,17 +12,14 @@ import path from 'path'
 
 export const agregaCarrito = async (req, res) => {
     try {
-        const { productoId, cantidadProducto, nit } = req.body
+        const { productoId, cantidadProducto } = req.body
         const { id } = req.user
         const usuario = await userModel.findOne({ _id: id })
         if (!usuario) return res.status(400).send({ message: 'Usuario no encontrado' })
-        if('fecha' in datos)return res.send({message:'No se puede agregar la fecha se agrega automaticamente'})
+     
         const facturaExistente = await facturalModel.findOne({ usuario: usuario._id, estado: true })
         let factura
-        const producto = await productoModel.findOneAndUpdate(
-            { _id: productoId, estado: true },
-            { $inc: { contador: 1 } }
-        )
+        const producto = await productoModel.findOne( { _id: productoId, estado: true },)
         if (facturaExistente) {
             const productoEnCarrito = facturaExistente.carritoCompra.find(item => item.producto.toString() === productoId)
             if (productoEnCarrito) {
@@ -55,10 +52,7 @@ export const agregaCarrito = async (req, res) => {
             factura = facturaExistente
         } else {
             // Si no existe una factura activa, crea una nueva
-            const producto = await productoModel.findOneAndUpdate(
-                { _id: productoId, estado: true },
-                { $inc: { contador: 1 } }
-            )
+          
             if (!producto) return res.status(400).send({ message: 'No se encontró el producto' })
             if (producto.stock <= 0) {
                 return res.send({ message: 'No tenemos el producto seleccionado en stock' })
@@ -74,7 +68,7 @@ export const agregaCarrito = async (req, res) => {
                     subtotal: subtotal,
                     precioUnitario: producto.precio,
                 }],
-                nit: nit,
+                
                 usuario: usuario._id,
                 estado: true, // true significa que todavía no ha pagado
             })
@@ -91,6 +85,7 @@ export const agregaCarrito = async (req, res) => {
 
 export const factura = async (req, res) => {
     try {
+        let {nit} =req.body
          let { id,usuario,nombre } = req.user
        let fecha = new Date()
         const opcionesFormato = {
@@ -102,17 +97,25 @@ export const factura = async (req, res) => {
             second: 'numeric',
         }
         const fechaFormateada = new Intl.DateTimeFormat('es-ES', opcionesFormato).format(fecha)
+        let facturasA =await facturalModel.updateMany({ usuario: id, estado: true }, { $set: { fecha: fechaFormateada,nit: nit } })
         let facturas = await facturalModel.find({ usuario: id, estado: true })
+        await facturalModel.updateMany({ usuario: id, estado: true }, { $set: { estado: false } })
 
         if (!facturas || facturas.length === 0) return res.status(401).send({ message: 'Usuario no ha agregado nada nuevo al carrito' })
-        await facturalModel.updateMany({ usuario: id, estado: true }, { $set: { estado: false, fecha: fechaFormateada } })
+       
         let detallesFactura = []
         let totalFactura = 0
         for (let factura of facturas) {
             for (let item of factura.carritoCompra) {
                 let producto = await productoModel.findOne({ _id: item.producto })
+                const productoContador = await productoModel.findOneAndUpdate(
+                    { _id: producto._id, estado: true },
+                    { $inc: { contador: 1 } }
+                )
                 if (!producto) return res.status(401).send({ message: 'Producto no encontrado' })
                 let productoStock = await productoModel.findOne({ _id: item.producto })
+                await productoModel.findOneAndUpdate({ _id: item.producto },productoStock.stock = productoStock.stock-item.cantidadProducto)
+                await productoStock.save()
                 if (productoStock.stock === 0) await productoModel.findOneAndUpdate({ _id: item.producto }, { estado: false })
                 let totalPorProducto = item.subtotal
                 totalFactura += +totalPorProducto.toFixed(2)
@@ -143,23 +146,29 @@ export const factura = async (req, res) => {
          doc.pipe(res)
          doc.fontSize(14).text(`Factura - ${fechaFormateada}`, { align: 'center' })
          doc.moveDown()
-         doc.fontSize(12).text(`Nombre  del usuario: ${nombre}`)
+         doc.moveDown()
+         doc.fontSize(13).text(`Nombre  del usuario: ${nombre}`)
          const nitFactura = facturas.length > 0 ? facturas[0].nit : 'N/A'
-        doc.fontSize(12).text(`NIT: ${nitFactura}`)
+         doc.fontSize(12).text(`NIT: ${nitFactura}`)
          doc.moveDown()
-         doc.moveDown()
+         doc.fontSize(12).text(`___________________________________________________________________`)
+        
  
          detallesFactura.forEach((detalle, index) => {
-             doc.fontSize(12).text(`Producto: ${detalle.nombreProducto}`)
-             doc.fontSize(12).text(`Precio: ${detalle.precio},`)
-             doc.fontSize(12).text(`Cantidad: ${detalle.cantidadProducto}`)
-             doc.fontSize(12).text(`Subtotal: ${detalle.subtotal}`, { align: 'right' })
+            doc.moveDown()
+            doc.fontSize(12).text(`Producto: ${detalle.nombreProducto}`)
+            doc.fontSize(12).text(`Precio:  Q.${detalle.precio} `)
+            doc.fontSize(12).text(`Cantidad:  ${detalle.cantidadProducto}  `)
+            doc.fontSize(12).text(`SubTotal: Q${detalle.subtotal}`, { align: 'right' })
+            doc.moveDown()
              if (index < detallesFactura.length - 1) {
-                 doc.moveDown();
+                doc.fontSize(12).text(`___________________________________________________________________`)
              }
          })
+         
+      
          doc.moveDown()
-         doc.moveDown()
+         doc.fontSize(12).text(`-------------------------------------------------------------------------------------------------------------------`)
          doc.moveDown()
          doc.fontSize(14).text(`Total: ${totalFactura.toFixed(2)}`, { align: 'right' })
  
@@ -171,6 +180,7 @@ export const factura = async (req, res) => {
          }
 
          doc.pipe(fs.createWriteStream(filePath))
+         console.log('Ya esta el pdf en la carpeta factura en el proyecto')
     } catch (err) {
         console.error(err)
         return res.status(500).send({ message: 'Error al obtener la factura' })

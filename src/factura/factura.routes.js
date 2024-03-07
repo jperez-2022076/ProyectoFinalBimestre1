@@ -6,7 +6,7 @@ import { admin, validateJwt } from "../middlewares/validate-jwt.js"
 const api = Router()
 
 api.post('/agregarCarrito',[validateJwt],agregaCarrito)
-api.get('/factura',[validateJwt],factura)
+api.post('/factura',[validateJwt],factura)
 api.get('/FacturaAdmin/:id',[validateJwt,admin],FacturaAdmin)
 api.put('/ActualizarFacturaAdmin/:uid',actualizarFacturaAdmin)
 
