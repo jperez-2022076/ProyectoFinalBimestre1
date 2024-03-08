@@ -7,6 +7,7 @@ import PDFDocument from 'pdfkit'
 import url from 'url'
 import fs from 'fs'
 import path from 'path'
+import { measureMemory } from "vm"
 
 
 
@@ -167,7 +168,7 @@ export const factura = async (req, res) => {
             doc.fontSize(12).text(`Producto: ${detalle.nombreProducto}`)
             doc.fontSize(12).text(`Precio:  Q.${detalle.precio} `)
             doc.fontSize(12).text(`Cantidad:  ${detalle.cantidadProducto}  `)
-            doc.fontSize(12).text(`SubTotal: Q${detalle.subtotal}`, { align: 'right' })
+            doc.fontSize(12).text(`SubTotal: Q.${detalle.subtotal}`, { align: 'right' })
             doc.moveDown()
              if (index < detallesFactura.length - 1) {
                 doc.fontSize(12).text(`___________________________________________________________________`)
@@ -178,7 +179,7 @@ export const factura = async (req, res) => {
          doc.moveDown()
          doc.fontSize(12).text(`-------------------------------------------------------------------------------------------------------------------`)
          doc.moveDown()
-         doc.fontSize(14).text(`Total: ${totalFactura.toFixed(2)}`, { align: 'right' })
+         doc.fontSize(14).text(`Total: Q.${totalFactura.toFixed(2)}`, { align: 'right' })
  
          // Finalizar el documento PDF
          doc.end()
@@ -194,7 +195,22 @@ export const factura = async (req, res) => {
         return res.status(500).send({ message: 'Error al obtener la factura' })
     }
 }
+export const eliminarCarrito = async (req, res) => {
+    try {
+        const { id } = req.params
+        let {productoId} = req.body
+        let factura = await facturalModel.findOne({ _id: id })
+        if (!factura) return res.status(404).send({ message: 'Factura no encontrada' })
+        // Filtrar el carrito para eliminar el producto por su ID
+        factura.carritoCompra = factura.carritoCompra.filter(item => item.producto === productoId)
+        await factura.save()
 
+        res.send({ message: 'Producto eliminado del carrito de compra correctamente' ,factura})
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ message: 'Error interno del servidor' });
+    }
+}
 
 export const FacturaAdmin = async(req,res)=>{
     try {
@@ -229,6 +245,62 @@ export const FacturaAdmin = async(req,res)=>{
         
     }
 }
+
+export const actualizarCarrito = async(req,res)=>{
+    try {
+        let {uid} = req.params
+        let{rol} = req.user
+        let datos = req.body
+        if(rol == 'CLIENTE'){
+            const factura = await facturalModel.findOne({_id:uid})
+            if(!factura)return res.status(404).send({message:'Factura no encontrada'})
+            if ('cantidadProducto' in datos && 'producto' in datos ) {
+                const itemEnFactura = factura.carritoCompra.find(item => item.producto.toString() === datos.producto)
+                if (itemEnFactura) {
+                    if (itemEnFactura.cantidadProducto > datos.cantidadProducto) {
+                        const producto = await productoModel.findOne({ _id: datos.producto })
+                        const cantidad = itemEnFactura.cantidadProducto - datos.cantidadProducto
+                        if (producto.stock <= 0) {
+                            return res.send({ message: 'No tenemos el producto seleccionado en stock' })
+                        } else if (datos.cantidadProducto > producto.stock) {
+                            return res.send({ message: `No tenemos suficiente stock del producto, solo tenemos ${producto.stock} unidades` })
+                        }
+                        // Restar cantidad al stock en la base de datos
+                        itemEnFactura.cantidadProducto = datos.cantidadProducto
+                        itemEnFactura.subtotal = datos.cantidadProducto*producto.precio
+                        console.log(itemEnFactura.subtotal)
+                        producto.stock += cantidad
+                        await factura.save()
+                        await producto.save()
+                    } else if (itemEnFactura.cantidadProducto < datos.cantidadProducto) {
+                        const producto = await productoModel.findOne({ _id: datos.producto })
+                        const cantidad = datos.cantidadProducto - itemEnFactura.cantidadProducto
+                        if (producto.stock <= 0) {
+                            return res.send({ message: 'No tenemos el producto seleccionado en stock' })
+                        } else if (datos.cantidadProducto > producto.stock) {
+                            return res.send({ message: `No tenemos suficiente stock del producto, solo tenemos ${producto.stock} unidades` })
+                        }
+                        // Sumar cantidad al stock en la base de datos
+                        itemEnFactura.subtotal = datos.cantidadProducto*producto.precio
+                        console.log(itemEnFactura.subtotal)
+                        producto.stock -= cantidad
+                        itemEnFactura.cantidadProducto = datos.cantidadProducto
+                        await factura.save()
+                        await producto.save()
+                    }
+                }
+            }
+             return res.send({message:'Se actulizo perfectamente la factura',factura})
+        }else   {
+            res.status(403).send({message:'No se puede actualiza un carrito que no es tuyo'})
+        }
+       
+    } catch (err) {
+        console.error(err)
+        return res.status(500).send({message: 'Error al actualizar la factura'})
+    }
+}
+
 
 
 export const actualizarFacturaAdmin = async(req,res)=>{

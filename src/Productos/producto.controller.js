@@ -36,10 +36,9 @@ export const listar =async(req,res)=>{
 export const listaNombre = async(req,res)=>{
     try {
         let {nombreProducto} = req.body
-        let producto = await productoModel.findOne({nombreProducto: nombreProducto},{estado: true})
+        let producto = await productoModel.find(({nombreProducto: new RegExp(nombreProducto, 'i'), estado: true})).populate('categoria',['categoria','descripcion'])
         if(!producto || producto.estado === false)return res.status(404).send({message: 'Ningun producto tiene este nombre'})
-        let productoEncontrado = await productoModel.findOne({_id: producto._id}).populate('categoria',['categoria','descripcion'])
-        return res.send({message:'Producto encontrado',productoEncontrado})
+        return res.send({message:'Producto encontrado',producto})
     } catch (err) {
         console.error(err)
         return res.status(500).send({message:'Error al listar por nombre'})
