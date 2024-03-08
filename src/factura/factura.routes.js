@@ -8,6 +8,6 @@ const api = Router()
 api.post('/agregarCarrito',[validateJwt],agregaCarrito)
 api.post('/factura',[validateJwt],factura)
 api.get('/FacturaAdmin/:id',[validateJwt,admin],FacturaAdmin)
-api.put('/ActualizarFacturaAdmin/:uid',actualizarFacturaAdmin)
+api.put('/ActualizarFacturaAdmin/:uid',[validateJwt,admin],actualizarFacturaAdmin)
 
 export default api

@@ -137,6 +137,12 @@ export const factura = async (req, res) => {
         const filePath = path.resolve(rutaCompleta)
          // Crear un nuevo documento PDF
          const doc = new PDFDocument()
+         const imagePath = path.resolve('fondoFactura.png');
+
+         doc.image(imagePath, 0, 0, { width: doc.page.width, height: doc.page.height });
+
+         // Establecer opacidad para que la imagen sea el fondo
+         
          // Configurar el nombre del archivo PDF
          res.setHeader('Content-Disposition', `inline; filename=Factura-${fechaFormateada}.pdf`)
          // Establecer el tipo de contenido
@@ -144,6 +150,8 @@ export const factura = async (req, res) => {
  
          // Escribir contenido en el documento PDF
          doc.pipe(res)
+         doc.moveDown()
+         doc.moveDown()
          doc.fontSize(14).text(`Factura - ${fechaFormateada}`, { align: 'center' })
          doc.moveDown()
          doc.moveDown()

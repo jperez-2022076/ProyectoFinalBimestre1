@@ -1,63 +1,70 @@
 {
     "client": "Thunder Client",
     "collectionName": "ProyectoFinal",
-    "dateExported": "2024-02-23T04:47:34.579Z",
+    "dateExported": "2024-03-08T06:03:10.454Z",
     "version": "1.1",
     "folders": [
         {
-            "_id": "57f051f3-1b3e-470c-9dfb-42a46976f7b0",
+            "_id": "74a15e69-ef60-44be-b592-74d4f98bb3f6",
             "name": "categoria",
             "containerId": "",
-            "created": "2024-02-23T03:09:39.032Z",
+            "created": "2024-02-23T04:48:11.987Z",
             "sortNum": 10000
         },
         {
-            "_id": "47d74e53-d102-4ec0-82f3-a6d342188a8d",
+            "_id": "0191298c-f1da-448c-8370-ab5bc3df728e",
             "name": "Productos",
             "containerId": "",
-            "created": "2024-02-23T03:29:23.060Z",
+            "created": "2024-02-23T04:48:11.988Z",
             "sortNum": 20000
         },
         {
-            "_id": "8c2800f3-4259-4921-9084-bfd93a5a0fcd",
+            "_id": "526dc827-3410-4dc0-9da9-2c84094008ac",
             "name": "User",
             "containerId": "",
-            "created": "2024-02-23T03:47:29.578Z",
+            "created": "2024-02-23T04:48:11.989Z",
             "sortNum": 30000
         },
         {
-            "_id": "8af967a2-06b2-4b3d-80ea-8e9a03e9ef37",
+            "_id": "a617cbea-cea3-4d73-891c-55dafa2b1763",
             "name": "factura",
             "containerId": "",
-            "created": "2024-02-23T04:40:08.555Z",
+            "created": "2024-02-23T04:48:11.990Z",
             "sortNum": 50000
+        },
+        {
+            "_id": "f68bb858-2b24-4d8b-bff9-299173597c9c",
+            "name": "Carrito",
+            "containerId": "",
+            "created": "2024-03-03T19:54:48.862Z",
+            "sortNum": 60000
         }
     ],
     "requests": [
         {
-            "_id": "0533d304-4b59-43ee-8850-0c6841b7a237",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "57f051f3-1b3e-470c-9dfb-42a46976f7b0",
+            "_id": "a1bfc158-49b4-4bcf-8afa-31e9db6bb2d3",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "74a15e69-ef60-44be-b592-74d4f98bb3f6",
             "name": "ListarCategoria",
             "url": "listarCategoria",
             "method": "GET",
             "sortNum": 10000,
-            "created": "2024-02-23T03:09:47.443Z",
-            "modified": "2024-02-23T03:32:10.377Z",
+            "created": "2024-02-23T04:48:11.987Z",
+            "modified": "2024-02-23T04:48:11.987Z",
             "headers": [],
             "params": [],
             "tests": []
         },
         {
-            "_id": "b0cc80c4-a7f8-4ac9-ad70-c85d37d2fd35",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "57f051f3-1b3e-470c-9dfb-42a46976f7b0",
+            "_id": "fa9b4158-39c7-4241-aca3-00f79185da76",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "74a15e69-ef60-44be-b592-74d4f98bb3f6",
             "name": "AgregarCategoria",
             "url": "agregarCategorias",
             "method": "POST",
             "sortNum": 30000,
-            "created": "2024-02-23T03:18:34.641Z",
-            "modified": "2024-02-23T03:19:37.154Z",
+            "created": "2024-02-23T04:48:11.988Z",
+            "modified": "2024-02-23T04:48:11.988Z",
             "headers": [],
             "params": [],
             "body": {
@@ -77,29 +84,35 @@
             "tests": []
         },
         {
-            "_id": "9fc2d849-3a5e-4875-be1e-b205b8ec6cdb",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "47d74e53-d102-4ec0-82f3-a6d342188a8d",
+            "_id": "f0d3fa96-3e1c-47a0-8a3a-48d631ccb0e9",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "0191298c-f1da-448c-8370-ab5bc3df728e",
             "name": "ListarProducto",
             "url": "listarProducto",
             "method": "GET",
             "sortNum": 30000,
-            "created": "2024-02-23T03:34:01.424Z",
-            "modified": "2024-02-23T03:34:20.865Z",
-            "headers": [],
+            "created": "2024-02-23T04:48:11.992Z",
+            "modified": "2024-03-07T05:10:47.719Z",
+            "headers": [
+                {
+                    "name": "token",
+                    "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2NWRiZTYyOTQxNzY4OGY2ZGM2MGM1ZjYiLCJ1c3VhcmlvIjoianBlcmV6Iiwibm9tYnJlIjoiam9zdWUiLCJyb2wiOiJDTElFTlRFIiwiaWF0IjoxNzA5Nzg2NTA0LCJleHAiOjE3MDk4MDA5MDR9.7WpRTEruVcS1I92XVTEw5cGTxFuQ9u13IlcuN_itckE"
+                }
+            ],
             "params": [],
+            "reqType": "get",
             "tests": []
         },
         {
-            "_id": "ea9a19dc-0530-4655-8353-8e60f589ec6a",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "57f051f3-1b3e-470c-9dfb-42a46976f7b0",
+            "_id": "6505d8a8-a9b1-4b89-a292-6d1c253c31a9",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "74a15e69-ef60-44be-b592-74d4f98bb3f6",
             "name": "actulizarCategoria",
             "url": "actualizarCategoria/",
             "method": "PUT",
             "sortNum": 40000,
-            "created": "2024-02-23T03:21:06.406Z",
-            "modified": "2024-02-23T03:22:07.289Z",
+            "created": "2024-02-23T04:48:11.989Z",
+            "modified": "2024-02-23T04:48:11.989Z",
             "headers": [],
             "params": [],
             "body": {
@@ -115,43 +128,50 @@
             "tests": []
         },
         {
-            "_id": "45068fbb-c2b7-4fd4-ac97-7a2a291d18c9",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "57f051f3-1b3e-470c-9dfb-42a46976f7b0",
+            "_id": "c48905ff-c6da-478e-a8ce-1c50b8fe4f32",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "74a15e69-ef60-44be-b592-74d4f98bb3f6",
             "name": "EliminarCategoria",
-            "url": "eliminarCategoria/65d288e4588ac605658c2818",
+            "url": "eliminarCategoria/65dbb72df7a9db6c1641f453",
             "method": "DELETE",
             "sortNum": 50000,
-            "created": "2024-02-23T03:22:19.022Z",
-            "modified": "2024-02-23T03:28:03.999Z",
-            "headers": [],
+            "created": "2024-02-23T04:48:11.990Z",
+            "modified": "2024-03-07T05:08:49.654Z",
+            "headers": [
+                {
+                    "name": "token",
+                    "value": "",
+                    "isDisabled": true
+                }
+            ],
             "params": [],
+            "reqType": "del",
             "tests": []
         },
         {
-            "_id": "4911b086-eaa2-49bd-b245-51fd4c4e34c2",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "47d74e53-d102-4ec0-82f3-a6d342188a8d",
+            "_id": "95c36211-f2d3-479a-bdb2-b58458fb63d3",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "0191298c-f1da-448c-8370-ab5bc3df728e",
             "name": "ListarPorCategoria",
             "url": "listarPorCategoria/65d80eda4e35c20cdbcf4368",
             "method": "GET",
             "sortNum": 80000,
-            "created": "2024-02-23T03:34:40.004Z",
-            "modified": "2024-02-23T03:38:16.539Z",
+            "created": "2024-02-23T04:48:11.993Z",
+            "modified": "2024-02-23T04:48:11.993Z",
             "headers": [],
             "params": [],
             "tests": []
         },
         {
-            "_id": "cc69b67a-7f6b-4c55-a27b-86a3c01ded06",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "47d74e53-d102-4ec0-82f3-a6d342188a8d",
+            "_id": "65268466-2e29-47cc-82a4-3cc9de11d5c0",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "0191298c-f1da-448c-8370-ab5bc3df728e",
             "name": "listarPorNombre",
             "url": "listarPorNombre",
             "method": "POST",
             "sortNum": 100000,
-            "created": "2024-02-23T03:39:28.628Z",
-            "modified": "2024-02-23T03:39:56.756Z",
+            "created": "2024-02-23T04:48:11.994Z",
+            "modified": "2024-02-23T04:48:11.994Z",
             "headers": [],
             "params": [],
             "body": {
@@ -167,15 +187,15 @@
             "tests": []
         },
         {
-            "_id": "1f7a3c7e-8dff-4b2a-82ef-0f3c1a05598c",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "47d74e53-d102-4ec0-82f3-a6d342188a8d",
+            "_id": "9b5def30-d592-43eb-b1ad-228c1b7d6b4d",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "0191298c-f1da-448c-8370-ab5bc3df728e",
             "name": "AgregarProducto",
             "url": "agregarProducto",
             "method": "POST",
             "sortNum": 110000,
-            "created": "2024-02-23T03:30:24.192Z",
-            "modified": "2024-02-23T03:33:40.067Z",
+            "created": "2024-02-23T04:48:11.991Z",
+            "modified": "2024-02-23T04:48:11.991Z",
             "headers": [],
             "params": [],
             "body": {
@@ -207,15 +227,15 @@
             "tests": []
         },
         {
-            "_id": "0307bd5d-accb-4793-b13a-f39f5c239f54",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "47d74e53-d102-4ec0-82f3-a6d342188a8d",
+            "_id": "b0a17196-a964-48c9-b46d-d8867b81e3cc",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "0191298c-f1da-448c-8370-ab5bc3df728e",
             "name": "actulizar",
             "url": "actulizarProducto/65d584ab5eacae997aed5ee1",
             "method": "PUT",
             "sortNum": 110000,
-            "created": "2024-02-23T03:41:36.396Z",
-            "modified": "2024-02-23T03:44:23.469Z",
+            "created": "2024-02-23T04:48:11.995Z",
+            "modified": "2024-02-23T04:48:11.995Z",
             "headers": [],
             "params": [],
             "body": {
@@ -231,29 +251,29 @@
             "tests": []
         },
         {
-            "_id": "49b5e631-5d1f-45cc-921f-706f183b52ac",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "47d74e53-d102-4ec0-82f3-a6d342188a8d",
+            "_id": "643fa0cd-5dc8-4d78-802a-406e26560012",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "0191298c-f1da-448c-8370-ab5bc3df728e",
             "name": "eliminar",
             "url": "eliminarProducto/65d584ab5eacae997aed5ee1",
             "method": "DELETE",
             "sortNum": 120000,
-            "created": "2024-02-23T03:45:24.349Z",
-            "modified": "2024-02-23T03:45:47.564Z",
+            "created": "2024-02-23T04:48:11.996Z",
+            "modified": "2024-02-23T04:48:11.996Z",
             "headers": [],
             "params": [],
             "tests": []
         },
         {
-            "_id": "6a891168-b6ef-4975-9450-ce97b675dc68",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "8c2800f3-4259-4921-9084-bfd93a5a0fcd",
+            "_id": "56162cf2-96b5-4adf-ba2f-365920cd2060",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "526dc827-3410-4dc0-9da9-2c84094008ac",
             "name": "Registrar",
             "url": "registrar",
             "method": "POST",
             "sortNum": 130000,
-            "created": "2024-02-23T03:52:31.828Z",
-            "modified": "2024-02-23T03:54:46.849Z",
+            "created": "2024-02-23T04:48:11.997Z",
+            "modified": "2024-02-23T04:48:11.997Z",
             "headers": [],
             "params": [],
             "body": {
@@ -285,15 +305,15 @@
             "tests": []
         },
         {
-            "_id": "97730b4c-8ead-43d5-9f0c-c099dd3a6407",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "8c2800f3-4259-4921-9084-bfd93a5a0fcd",
+            "_id": "775de7a6-02b8-4cf4-98db-8d7568112282",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "526dc827-3410-4dc0-9da9-2c84094008ac",
             "name": "login",
             "url": "login?usuario=jperez&contraseña=12345678",
             "method": "POST",
             "sortNum": 140000,
-            "created": "2024-02-23T03:56:00.359Z",
-            "modified": "2024-02-23T04:03:09.439Z",
+            "created": "2024-02-23T04:48:11.998Z",
+            "modified": "2024-03-06T05:25:20.216Z",
             "headers": [],
             "params": [
                 {
@@ -321,18 +341,19 @@
                     }
                 ]
             },
+            "reqType": "post",
             "tests": []
         },
         {
-            "_id": "0d40b02a-ebf7-452c-946e-12d09f6445f8",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "8c2800f3-4259-4921-9084-bfd93a5a0fcd",
+            "_id": "3bdc19ee-e3d8-4a03-86a9-d8dafc7897d3",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "526dc827-3410-4dc0-9da9-2c84094008ac",
             "name": "actualizar",
             "url": "actualizarCuenta/65d57511867144529e829757?nombre=dario",
             "method": "PUT",
             "sortNum": 150000,
-            "created": "2024-02-23T04:04:21.957Z",
-            "modified": "2024-02-23T04:33:31.607Z",
+            "created": "2024-02-23T04:48:11.999Z",
+            "modified": "2024-02-23T04:48:11.999Z",
             "headers": [],
             "params": [
                 {
@@ -354,29 +375,49 @@
             "tests": []
         },
         {
-            "_id": "21540bdf-9736-4a30-9e8b-b034c5bb941f",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "8c2800f3-4259-4921-9084-bfd93a5a0fcd",
+            "_id": "553d3724-1aa1-4065-ac72-6242df6b7bf4",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "526dc827-3410-4dc0-9da9-2c84094008ac",
             "name": "eliminar",
             "url": "eliminarCuenta/65d57511867144529e829757",
             "method": "DELETE",
             "sortNum": 160000,
-            "created": "2024-02-23T04:33:56.195Z",
-            "modified": "2024-02-23T04:34:20.010Z",
+            "created": "2024-02-23T04:48:12.000Z",
+            "modified": "2024-02-23T04:48:12.000Z",
             "headers": [],
             "params": [],
             "tests": []
         },
         {
-            "_id": "d6b38e8e-9942-400c-872d-af15a5d79295",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "8af967a2-06b2-4b3d-80ea-8e9a03e9ef37",
-            "name": "agregarCarrito",
-            "url": "agregarCarrito",
+            "_id": "3c608b12-6d23-4338-ae2d-15d684a484b2",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "a617cbea-cea3-4d73-891c-55dafa2b1763",
+            "name": "facturaVer",
+            "url": "factura",
             "method": "POST",
-            "sortNum": 170000,
-            "created": "2024-02-23T04:40:25.646Z",
-            "modified": "2024-02-23T04:42:32.653Z",
+            "sortNum": 180000,
+            "created": "2024-02-23T04:48:12.002Z",
+            "modified": "2024-03-08T05:57:23.353Z",
+            "headers": [
+                {
+                    "name": "token",
+                    "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2NWRiZTYyOTQxNzY4OGY2ZGM2MGM1ZjYiLCJ1c3VhcmlvIjoianBlcmV6Iiwibm9tYnJlIjoiam9zdWUiLCJyb2wiOiJDTElFTlRFIiwiaWF0IjoxNzA5ODc3Mjk0LCJleHAiOjE3MDk4OTE2OTR9.jeeBZg1AKz--GdOqjwkx1MjnNVsO_Mgeb7kx0qaW8eU"
+                }
+            ],
+            "params": [],
+            "reqType": "get",
+            "tests": []
+        },
+        {
+            "_id": "f3a3e6d7-b08d-4b83-8b08-9f74a84e1754",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "a617cbea-cea3-4d73-891c-55dafa2b1763",
+            "name": "ActualizarFacturaAdmin",
+            "url": "ActualizarFacturaAdmin/65e6abea0e0250c5123808d4",
+            "method": "PUT",
+            "sortNum": 195000,
+            "created": "2024-03-03T19:38:35.860Z",
+            "modified": "2024-03-07T04:23:33.701Z",
             "headers": [],
             "params": [],
             "body": {
@@ -384,31 +425,119 @@
                 "raw": "",
                 "form": [
                     {
-                        "name": "producto",
-                        "value": "65d584b75eacae997aed5eea"
-                    },
-                    {
                         "name": "cantidadProducto",
-                        "value": "2"
+                        "value": "2001"
                     },
                     {
-                        "name": "usuario",
-                        "value": "65d576d3451bce25070931ff"
+                        "name": "producto",
+                        "value": "65dbc0ac0d269ae5209bccde"
+                    },
+                    {
+                        "name": "nit",
+                        "value": "22",
+                        "isDisabled": true
                     }
                 ]
             },
+            "reqType": "put",
             "tests": []
         },
         {
-            "_id": "661c52c7-c4c0-4633-ba8d-5f24364df64f",
-            "colId": "dd9df47f-acb4-43d6-b0fd-4afeb943dd6c",
-            "containerId": "8af967a2-06b2-4b3d-80ea-8e9a03e9ef37",
-            "name": "facturaVer",
-            "url": "factura/65d576d3451bce25070931ff",
+            "_id": "851f79c4-5422-4365-81ec-de2b2da0c309",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "f68bb858-2b24-4d8b-bff9-299173597c9c",
+            "name": "agregarCarrito",
+            "url": "agregarCarrito",
+            "method": "POST",
+            "sortNum": 230000,
+            "created": "2024-02-23T04:48:12.001Z",
+            "modified": "2024-03-07T04:48:03.580Z",
+            "headers": [
+                {
+                    "name": "token",
+                    "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2NWRiZTYyOTQxNzY4OGY2ZGM2MGM1ZjYiLCJ1c3VhcmlvIjoianBlcmV6Iiwibm9tYnJlIjoiam9zdWUiLCJyb2wiOiJDTElFTlRFIiwiaWF0IjoxNzA5Nzg2NTA0LCJleHAiOjE3MDk4MDA5MDR9.7WpRTEruVcS1I92XVTEw5cGTxFuQ9u13IlcuN_itckE"
+                }
+            ],
+            "params": [],
+            "body": {
+                "type": "formencoded",
+                "raw": "",
+                "form": [
+                    {
+                        "name": "productoId",
+                        "value": "65dbb73af7a9db6c1641f456"
+                    },
+                    {
+                        "name": "cantidadProducto",
+                        "value": "9"
+                    },
+                    {
+                        "name": "nit",
+                        "value": "84894"
+                    }
+                ]
+            },
+            "reqType": "post",
+            "tests": []
+        },
+        {
+            "_id": "117ec705-ff57-44ac-8da5-6ca8cc848a48",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "a617cbea-cea3-4d73-891c-55dafa2b1763",
+            "name": "verFacturaAdmin",
+            "url": "FacturaAdmin/65dbe629417688f6dc60c5f6",
             "method": "GET",
-            "sortNum": 180000,
-            "created": "2024-02-23T04:43:09.079Z",
-            "modified": "2024-02-23T04:45:46.535Z",
+            "sortNum": 240000,
+            "created": "2024-03-05T06:01:16.310Z",
+            "modified": "2024-03-07T04:41:00.809Z",
+            "headers": [
+                {
+                    "name": "token",
+                    "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2NWRiZTYyNjQxNzY4OGY2ZGM2MGM1ZjQiLCJ1c3VhcmlvIjoiSm5vaiIsIm5vbWJyZSI6Ikpvc3VlIiwicm9sIjoiQURNSU4iLCJpYXQiOjE3MDk2MTg0NDQsImV4cCI6MTcwOTYzMjg0NH0.Zpvy45osu-kL7BzqOsQcuezJpG_E07vEw1rVzHqxQiU"
+                }
+            ],
+            "params": [],
+            "reqType": "get",
+            "tests": []
+        },
+        {
+            "_id": "67b8c019-6abf-4f1e-bede-945d0a712f78",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "0191298c-f1da-448c-8370-ab5bc3df728e",
+            "name": "ProductosMasVendidos",
+            "url": "listadoPorMasComprado",
+            "method": "GET",
+            "sortNum": 250000,
+            "created": "2024-03-07T05:05:41.974Z",
+            "modified": "2024-03-07T05:05:53.119Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "9c25c641-9fba-4218-b1bb-c03da675fd6d",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "0191298c-f1da-448c-8370-ab5bc3df728e",
+            "name": "listarPorMayorCompra",
+            "url": "/listarPorCompra",
+            "method": "GET",
+            "sortNum": 260000,
+            "created": "2024-03-08T05:44:31.121Z",
+            "modified": "2024-03-08T05:44:49.522Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "e47c1215-31a2-4190-81de-eae729cc034c",
+            "colId": "eb1f131c-692b-48b2-a7d5-b6da7da02369",
+            "containerId": "0191298c-f1da-448c-8370-ab5bc3df728e",
+            "name": "listarProductosAgotados",
+            "url": "/listarProductosAgotados",
+            "method": "GET",
+            "sortNum": 280000,
+            "created": "2024-03-08T05:45:51.537Z",
+            "modified": "2024-03-08T05:45:55.740Z",
             "headers": [],
             "params": [],
             "tests": []
