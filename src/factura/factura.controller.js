@@ -200,7 +200,7 @@ export const eliminarCarrito = async (req, res) => {
         const { id } = req.params
         let {productoId} = req.body
         let factura = await facturalModel.findOne({ _id: id })
-        if (!factura) return res.status(404).send({ message: 'Factura no encontrada' })
+        if (!factura) return res.status(404).send({ message: 'Factura no encontrada ' })
         // Filtrar el carrito para eliminar el producto por su ID
         factura.carritoCompra = factura.carritoCompra.filter(item => item.producto === productoId)
         await factura.save()
